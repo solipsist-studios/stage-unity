@@ -1,0 +1,22 @@
+{
+    "name": "solipsist.stage.windows",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9a6ddf5d388cc2b498e8a9d44bd289f0"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "WSA",
+        "WindowsStandalone32",
+        "WindowsStandalone64",
+        "XboxOne"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

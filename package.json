@@ -1,0 +1,23 @@
+{
+  "name": "studio.solipsist.stage",
+  "version": "0.1.0",
+  "displayName": "Solipsist Stage",
+  "description": "Quickly build mixed reality experiences in Unity for use with the Solipsist Stage platform",
+  "unity": "2020.3",
+  "keywords": [
+    "mr",
+    "ar",
+    "mixed",
+    "augmented",
+    "reality"
+  ],
+  "author": {
+    "name": "Solipsist Studios",
+    "email": "jeff@solipsist.studio",
+    "url": "https://solipsist.studio"
+  },
+  "dependencies": {
+    "com.unity.netcode.gameobjects": "1.1.0"
+  },
+  "unityRelease": "7f1"
+}

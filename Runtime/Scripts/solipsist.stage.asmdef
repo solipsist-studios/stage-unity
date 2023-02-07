@@ -1,0 +1,32 @@
+{
+    "name": "solipsist.stage",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1491147abca9d7d4bb7105af628b223e",
+        "GUID:2aa43b0c797e0d444a7e82e75d4f2082",
+        "GUID:097f34906a214f041bbadcd9a711c464",
+        "GUID:30ffa1d25a12ed940ba6f7095d968a02",
+        "GUID:33d8827e6b886c24980a9ae3153d16c9",
+        "GUID:cea456fb85d819645899d08b84466140",
+        "GUID:9a6ddf5d388cc2b498e8a9d44bd289f0"
+    ],
+    "includePlatforms": [
+        "Android",
+        "Editor",
+        "iOS",
+        "LinuxStandalone64",
+        "CloudRendering",
+        "WSA",
+        "WindowsStandalone32",
+        "WindowsStandalone64",
+        "XboxOne"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
