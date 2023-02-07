@@ -25,7 +25,8 @@ namespace Solipsist
         protected virtual void LoadConfiguration()
         {
             // Attempt to load configuration from config resource if present.
-            SpacesConnectionConfig config = Resources.Load<SpacesConnectionConfig>("SpacesConnectionConfig");
+            // TODO: Don't hardcode the name here.
+            StageConnectionConfig config = Resources.Load<StageConnectionConfig>("StageConnectionConfig");
             if (config != null)
             {
                 this.NetworkRole = config.NetworkRole;

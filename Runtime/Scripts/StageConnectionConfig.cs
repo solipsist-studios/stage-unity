@@ -12,8 +12,8 @@ namespace Solipsist
         Host
     }
 
-    [CreateAssetMenu(fileName = "SpacesConnectionConfig", menuName = "Solipsist Spaces/Configuration")]
-    public class SpacesConnectionConfig : ScriptableObject
+    [CreateAssetMenu(fileName = "StageConnectionConfig", menuName = "Solipsist Stage/Configuration")]
+    public class StageConnectionConfig : ScriptableObject
     {
         [Header("Client Info")]
         [SerializeField]
@@ -42,5 +42,16 @@ namespace Solipsist
         [Tooltip("Experience ID obtained when uploading to Azure")]
         protected string experienceID = "";
         public string ExperienceID => experienceID;
+
+        [Header("API Keys")]
+        [SerializeField]
+        [Tooltip("API Key for the AddAnchor function")]
+        protected string addAnchorApiCode = "";
+        public string AddAnchorApiCode => addAnchorApiCode;
+
+        [SerializeField]
+        [Tooltip("API Key for the GetAnchors function")]
+        protected string getAnchorsApiCode = "";
+        public string GetAnchorsApiCode => getAnchorsApiCode;
     }
 }
