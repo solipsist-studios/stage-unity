@@ -19,6 +19,21 @@ namespace Solipsist
 {
     public class AzureSpatialAnchors : MonoBehaviour
     {
+        [SerializeField] private GameObject anchorObject;
+
+        public void AddAnchor(Transform anchorTransform)
+        {
+            GameObject anchorObj = this.anchorObject != null ? GameObject.Instantiate(this.anchorObject) : new GameObject("SpatialAnchor");
+            anchorObj.transform.position = anchorTransform.position;
+
+#if UNITY_WSA || UNITY_ANDROID
+            UnityDispatcher.InvokeOnAppThread(async () =>
+            { 
+                await AddAnchorAsync(anchorObj, new AnchorObjectModel());
+            });
+#endif
+        }
+
 #if UNITY_WSA || UNITY_ANDROID
         private static readonly string ADD_ANCHOR_QUERY = "{0}/{1}/addanchor?code={2}";
         private static readonly string LIST_ANCHORS_QUERY = "{0}/{1}/getanchors?code={2}";
@@ -89,7 +104,7 @@ namespace Solipsist
                 LIST_ANCHORS_QUERY,
                 ConfigurationManager.Instance.BaseAddress,
                 ConfigurationManager.Instance.ExperienceID,
-                ConfigurationManager.Instance.ListAnchorsApiCode);
+                ConfigurationManager.Instance.GetAnchorsApiCode);
             UnityWebRequest request = UnityWebRequest.Get(reqAddr);
             yield return request.SendWebRequest();
 
@@ -239,7 +254,7 @@ namespace Solipsist
             }
         }
 
-        public async void AddAnchor(GameObject anchorObject, AnchorObjectModel anchorData)
+        public async Task AddAnchorAsync(GameObject anchorObject, AnchorObjectModel anchorData)
         {
             if (anchorObject == null)
             {
@@ -328,13 +343,21 @@ namespace Solipsist
         {
             Debug.Log($"ASA - Anchor recognized as a possible anchor {args.Identifier} {args.Status}");
 
-            if (args.Status == LocateAnchorStatus.Located && this.AnchorLocatedCallback != null)
+            if (args.Status == LocateAnchorStatus.Located)
             {
                 AnchorObjectModel anchor = GetAnchorModel(args.Identifier);
 
                 if (anchor != null)
                 {
-                    this.AnchorLocatedCallback(anchor, args);
+                    if (this.anchorObject != null)
+                    {
+                        SpawnAnchoredObject(this.anchorObject, args.Anchor);
+                    }
+
+                    if (this.AnchorLocatedCallback != null)
+                    {
+                        this.AnchorLocatedCallback(anchor, args);
+                    }
                 }
             }
         }
