@@ -15,7 +15,7 @@ namespace Solipsist
         public string BaseAddress { get; private set; }
         public string ExperienceID { get; private set; }
         public string AddAnchorApiCode { get; private set; }
-        public string ListAnchorsApiCode { get; private set; }
+        public string GetAnchorsApiCode { get; private set; }
 
         public static ConfigurationManager Instance { get; private set; }
 
@@ -37,6 +37,26 @@ namespace Solipsist
                 }
                 
                 this.ServerPort = config.ServerPort;
+
+                if (!string.IsNullOrEmpty(config.BaseAPIAddress))
+                {
+                    this.BaseAddress = config.BaseAPIAddress;
+                }
+
+                if (!string.IsNullOrEmpty(config.ExperienceID))
+                {
+                    this.ExperienceID = config.ExperienceID;
+                }
+
+                if (!string.IsNullOrEmpty(config.AddAnchorApiCode))
+                {
+                    this.AddAnchorApiCode = config.AddAnchorApiCode;
+                }
+
+                if (!string.IsNullOrEmpty(config.GetAnchorsApiCode))
+                {
+                    this.GetAnchorsApiCode = config.GetAnchorsApiCode;
+                }
             }
         }
 
