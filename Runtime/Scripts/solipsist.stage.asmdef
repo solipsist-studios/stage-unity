@@ -17,6 +17,7 @@
         "LinuxStandalone64",
         "CloudRendering",
         "WSA",
+        "WebGL",
         "WindowsStandalone32",
         "WindowsStandalone64",
         "XboxOne"

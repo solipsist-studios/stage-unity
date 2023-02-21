@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Linq;
@@ -17,10 +18,10 @@ using Microsoft.Azure.SpatialAnchors.Unity;
 
 namespace Solipsist
 {
-    public class AzureSpatialAnchors : MonoBehaviour
+    public class AzureSpatialAnchors : NetworkBehaviour
     {
         [SerializeField] private GameObject anchorObject;
-
+        
         public void AddAnchor(Transform anchorTransform)
         {
             GameObject anchorObj = this.anchorObject != null ? GameObject.Instantiate(this.anchorObject) : new GameObject("SpatialAnchor");
@@ -42,6 +43,9 @@ namespace Solipsist
         private CloudSpatialAnchorWatcher currentWatcher;
         private List<GameObject> foundOrCreatedAnchorGameObjects = new List<GameObject>();
         private List<AnchorObjectModel> createdAnchors = new List<AnchorObjectModel>();
+        private object createdAnchorLock = new object();
+        private bool isAnchorLoadNeeded = false;
+        private bool isSessionReady = false;
 
         public event Action<AnchorObjectModel> AnchorStoredCallback;
         public event Action<List<AnchorObjectModel>> AnchorsReceivedCallback;
@@ -74,12 +78,14 @@ namespace Solipsist
             }
         }
 
-        void Start()
+        private void Start()
         {
             this.spatialAnchorManager = GetComponent<SpatialAnchorManager>();
             this.spatialAnchorManager.LogDebug += (sender, args) => Debug.Log($"ASA - Debug: {args.Message}");
             this.spatialAnchorManager.Error += (sender, args) => Debug.LogError($"ASA - Error: {args.ErrorMessage}");
             this.spatialAnchorManager.AnchorLocated += SpatialAnchorManager_AnchorLocated;
+            this.spatialAnchorManager.SessionStarted += SpatialAnchorManager_SessionStarted;
+            this.spatialAnchorManager.SessionCreated += SpatialAnchorManager_SessionCreated;
 
             this.AnchorsReceivedCallback += OnAnchorsRetrieved;
             this.AnchorStoredCallback += OnAnchorStored;
@@ -88,9 +94,38 @@ namespace Solipsist
             StartCoroutine(RetrieveAnchors());
         }
 
+        private void SpatialAnchorManager_SessionCreated(object sender, EventArgs e)
+        {
+            UnityDispatcher.InvokeOnAppThread(async () =>
+            {
+                //Start session and search for all Anchors previously created
+                await this.spatialAnchorManager.StartSessionAsync();
+            });
+        }
+
+        private void SpatialAnchorManager_SessionStarted(object sender, EventArgs e)
+        {
+            this.isSessionReady = true;
+        }
+
+        private void Update()
+        {
+            if (this.isAnchorLoadNeeded && this.isSessionReady)
+            {
+                lock(this.createdAnchorLock)
+                {
+                    this.isAnchorLoadNeeded = false;
+                }
+
+                LocateAnchors();
+            }
+        }
+
         private void OnAnchorStored(AnchorObjectModel anchorID)
         {
             Debug.Log($"Successfully pushed anchor to the cloud: {anchorID}");
+
+            InvalidateAnchorsServerRpc();
         }
 
         private IEnumerator RetrieveAnchors()
@@ -144,10 +179,13 @@ namespace Solipsist
 
         protected virtual void OnAnchorsRetrieved(List<AnchorObjectModel> anchors)
         {
-            foreach (AnchorObjectModel anchor in anchors)
+            lock (this.createdAnchorLock)
             {
-                Debug.Log($"Found anchor id: {anchor.id}");
-                this.createdAnchors.Add(anchor);
+                foreach (AnchorObjectModel anchor in anchors)
+                {
+                    Debug.Log($"Found anchor id: {anchor.id}");
+                    this.createdAnchors.Add(anchor);
+                }
             }
 
             UnityDispatcher.InvokeOnAppThread(async () =>
@@ -156,11 +194,12 @@ namespace Solipsist
                 {
                     await this.spatialAnchorManager.CreateSessionAsync();
                 }
-
-                //Start session and search for all Anchors previously created
-                await this.spatialAnchorManager.StartSessionAsync();
-                LocateAnchors();
             });
+
+            lock (this.createdAnchorLock)
+            {
+                this.isAnchorLoadNeeded = true;
+            }
         }
 
         private async Task CreateAnchor(GameObject anchorGameObject, AnchorObjectModel anchorData)
@@ -199,7 +238,10 @@ namespace Solipsist
                 Debug.Log($"ASA - Saved cloud anchor with ID: {cloudSpatialAnchor.Identifier}");
                 anchorData.id = cloudSpatialAnchor.Identifier;
                 this.foundOrCreatedAnchorGameObjects.Add(anchorGameObject);
-                this.createdAnchors.Add(anchorData);
+                lock (this.createdAnchorLock)
+                {
+                    this.createdAnchors.Add(anchorData);
+                }
 
                 // Persist this anchor by calling our cloud API
                 StartCoroutine(StoreAnchor(anchorData));
@@ -315,26 +357,29 @@ namespace Solipsist
 
         private void LocateAnchors()
         {
-            if (this.createdAnchors.Count > 0)
+            lock (this.createdAnchorLock)
             {
-                //Create watcher to look for all stored anchor IDs
-                Debug.Log($"ASA - Creating watcher to look for spatial anchors");
-                AnchorLocateCriteria anchorLocateCriteria = new AnchorLocateCriteria();
-                anchorLocateCriteria.Identifiers = this.createdAnchors.Select(a => a.id).ToArray();
+                if (this.createdAnchors.Count > 0)
+                {
+                    //Create watcher to look for all stored anchor IDs
+                    Debug.Log($"ASA - Creating watcher to look for spatial anchors");
+                    AnchorLocateCriteria anchorLocateCriteria = new AnchorLocateCriteria();
+                    anchorLocateCriteria.Identifiers = this.createdAnchors.Select(a => a.id).ToArray();
 
-                if (currentWatcher != null)
-                {
-                    currentWatcher.Stop();
-                    currentWatcher = null;
-                }
-                currentWatcher = CreateWatcher(anchorLocateCriteria);
-                if (currentWatcher == null)
-                {
-                    Debug.Log("Either cloudmanager or session is null, should not be here!");
-                }
-                else
-                {
-                    Debug.Log($"ASA - Watcher created!");
+                    if (currentWatcher != null)
+                    {
+                        currentWatcher.Stop();
+                        currentWatcher = null;
+                    }
+                    currentWatcher = CreateWatcher(anchorLocateCriteria);
+                    if (currentWatcher == null)
+                    {
+                        Debug.Log("Either cloudmanager or session is null, should not be here!");
+                    }
+                    else
+                    {
+                        Debug.Log($"ASA - Watcher created!");
+                    }
                 }
             }
         }
@@ -359,6 +404,25 @@ namespace Solipsist
                         this.AnchorLocatedCallback(anchor, args);
                     }
                 }
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void InvalidateAnchorsServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            var clientId = serverRpcParams.Receive.SenderClientId;
+            if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+            {
+                InvalidateAnchorsClientRpc();
+            }
+        }
+
+        [ClientRpc]
+        private void InvalidateAnchorsClientRpc()
+        {
+            lock (this.createdAnchorLock)
+            {
+                this.isAnchorLoadNeeded = true;
             }
         }
 #endif
