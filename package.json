@@ -19,5 +19,12 @@
   "dependencies": {
     "com.unity.netcode.gameobjects": "1.1.0"
   },
+  "samples": [
+    {
+        "displayName": "Hello Stage",
+        "description": "Contains a sample scene showing how to locate and place anchored objects",
+        "path": "Samples~/HelloStage"
+    }
+  ],
   "unityRelease": "7f1"
 }
