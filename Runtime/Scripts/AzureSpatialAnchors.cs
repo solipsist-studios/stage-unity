@@ -188,6 +188,7 @@ namespace Solipsist
                 }
             }
 
+            // TODO: Should we skip this section if anchors list is empty?
             UnityDispatcher.InvokeOnAppThread(async () =>
             {
                 if (this.spatialAnchorManager.Session == null)
@@ -204,6 +205,7 @@ namespace Solipsist
 
         private async Task CreateAnchor(GameObject anchorGameObject, AnchorObjectModel anchorData)
         {
+            // TODO: Check if anchorData is null!
             //Add and configure ASA components
             CloudNativeAnchor cloudNativeAnchor = anchorGameObject.AddComponent<CloudNativeAnchor>();
             await cloudNativeAnchor.NativeToCloud();
