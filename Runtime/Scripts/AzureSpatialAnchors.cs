@@ -64,7 +64,7 @@ namespace Solipsist
             return null;
         }
 
-        private void OnDestroy()
+        public override void OnDestroy()
         {
             if (this.spatialAnchorManager != null)
             {
@@ -76,6 +76,8 @@ namespace Solipsist
                 this.currentWatcher.Stop();
                 this.currentWatcher = null;
             }
+
+            base.OnDestroy();
         }
 
         private void Start()
