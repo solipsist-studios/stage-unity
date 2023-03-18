@@ -39,12 +39,13 @@ Also probably works on iOS and Magic Leap, but is untested.
    ![Adding prefabs to the scene](https://user-images.githubusercontent.com/19314267/226136332-89a2c2aa-d5b4-4851-b722-48dcee6efcaf.gif)
     1. Network Manager
     1. Azure Spatial Anchors Manager
-![Using the Mixed Reality Feature Tool to import dependencies](./Assets/feature_tool.webm)
 1. Add calls to load / save spatial anchors
+![Connecting Add Anchor behaviour](https://user-images.githubusercontent.com/19314267/226136888-09eb695a-a330-4008-816d-fd1bf7fc8902.gif)
     1. Call the `AzureSpatialAnchorsManager.AzureSpatialAnchors.AddAnchor` function to persist an object
     1. Subscribe to `AzureSpatialAnchorsManager.AzureSpatialAnchors.AnchorLocatedCallback` to be notified when an anchor is loaded
 1. Build the Unity project for the Dedicated Server/Linux platform
 1. Add the contents of the build directory, excluding the `..._BurstDebugInformation_DoNotShip` folder, to a .tar.gz archive.
+
 1. Use the solx CLI tool to upload and launch your dedicated server
     1. Follow the steps to [download and use the solx CLI tool](https://github.com/solipsist-studios/MixedRealityStage/blob/main/ExperienceCatalogCLI/README.md).
     1. Open a command prompt
