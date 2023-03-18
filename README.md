@@ -35,8 +35,8 @@ Also probably works on iOS and Magic Leap, but is untested.
         1. Add this package from a Git URL using the same process:
         `https://github.com/solipsist-studios/stage-unity.git`
     1. Set up MRTK or other XR interaction packages according to their instructions
-![Adding prefabs to the scene](./Assets/prefabs.webm)
 1. Add necessary prefabs to scene
+   ![Adding prefabs to the scene](https://user-images.githubusercontent.com/19314267/226136332-89a2c2aa-d5b4-4851-b722-48dcee6efcaf.gif)
     1. Network Manager
     1. Azure Spatial Anchors Manager
 ![Using the Mixed Reality Feature Tool to import dependencies](./Assets/feature_tool.webm)
