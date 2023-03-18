@@ -22,8 +22,9 @@ Self-hosting is always free!
 Also probably works on iOS and Magic Leap, but is untested.
 
 ## Getting Started
-![Using the Mixed Reality Feature Tool to import dependencies](./Assets/mr-feature-tool.webm)
+
 1. Import Dependencies
+    ![Using the Mixed Reality Feature Tool to import dependencies](https://user-images.githubusercontent.com/19314267/226135369-11d9a3df-3f89-4e95-9de3-0c111625054d.gif)
     1. Use the [Microsoft Mixed Reality Feature Tool](https://learn.microsoft.com/en-us/windows/mixed-reality/develop/unity/welcome-to-mr-feature-tool#download) to install the following features:
         1. Azure Spatial Anchors SDK Core
         1. Azure Spatial Anchors SDK (Windows, iOS and/or Android)
