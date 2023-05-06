@@ -26,9 +26,15 @@ Also probably works on iOS and Magic Leap, but is untested.
 1. Import Dependencies
     ![Using the Mixed Reality Feature Tool to import dependencies](https://user-images.githubusercontent.com/19314267/226135369-11d9a3df-3f89-4e95-9de3-0c111625054d.gif)
     1. Use the [Microsoft Mixed Reality Feature Tool](https://learn.microsoft.com/en-us/windows/mixed-reality/develop/unity/welcome-to-mr-feature-tool#download) to install the following features:
-        1. Azure Spatial Anchors SDK Core
-        1. Azure Spatial Anchors SDK (Windows, iOS and/or Android)
-        1. Mixed Reality OpenXR Plugin
+        1. Azure Mixed Reality Services
+            1. Azure Spatial Anchors SDK Core
+            1. Azure Spatial Anchors SDK (Windows, iOS and/or Android)
+        1. MRTK3
+            1. MRTK Core Definitions
+            1. MRTK Graphics Tools
+            1. MRTK Input
+        1. Platform Support
+            1. Mixed Reality OpenXR Plugin
     1. Install Unity packages using [Install from a Git URL](https://docs.unity3d.com/Manual/upm-ui-giturl.html) for the following packages:
         1. WebSocket transport for Netcode for Game Objects 
         `https://github.com/Unity-Technologies/multiplayer-community-contributions.git?path=/Transports/com.community.netcode.transport.websocket`
@@ -43,6 +49,9 @@ Also probably works on iOS and Magic Leap, but is untested.
 ![Connecting Add Anchor behaviour](https://user-images.githubusercontent.com/19314267/226136888-09eb695a-a330-4008-816d-fd1bf7fc8902.gif)
     1. Call the `AzureSpatialAnchorsManager.AzureSpatialAnchors.AddAnchor` function to persist an object
     1. Subscribe to `AzureSpatialAnchorsManager.AzureSpatialAnchors.AnchorLocatedCallback` to be notified when an anchor is loaded
+1. Create a server configuration
+    1. Under Assets, create a Resources folder, and in that folder create a `Solipsist Stage->Configuration` asset
+    1. Accept the default name, `StageConnectionConfig.asset`
 1. Build the Unity project for the Dedicated Server/Linux platform
 1. Add the contents of the build directory, excluding the `..._BurstDebugInformation_DoNotShip` folder, to a .tar.gz archive.
 
@@ -52,9 +61,9 @@ Also probably works on iOS and Magic Leap, but is untested.
     1. Navigate to the folder where you have extracted the solx.exe file
     1. Run the following command
   ```
-  .\solx cat add --file "c:\path\to\your\linuxserver.tar.gz" --name app-name
+  .\solx cat add --file "c:\path\to\your\linuxserver.tar.gz" --name <app-name>
   ```
-  Note that `app-name` should contain only alphanumeric characters, '-' or '_'
+  Note that `app-name` should contain only alphanumeric characters or '-'
     1. When that completes, take note of the `experience-id` that is generated
     1. Run the following command
   ```
@@ -65,8 +74,8 @@ Also probably works on iOS and Magic Leap, but is untested.
 Your Azure administrator can provide you with the values for the following steps
     1. In Unity, open the Assets/AzureSpatialAnchors.SDK/Resources/SpatialAnchorConfig.asset file
     1. In the inspector, select "Api Key" for Authentication Mode, and fill out each value under Credentials
-    1. Under Assets, create a Resources folder, and in that folder create a Solipsist Stage->Configuration asset
-    1. Accept the default name, `StageConnectionConfig.asset`
-    1. Open the StageConnectionConfig.asset file, and fill out the values in the Inspector
+    1. Open the StageConnectionConfig.asset file you created in an earlier step
+        1. Change `Network Role` to `Client`
+        1. Fill out the remaining values according to your server
     1. Build the project for your desired platform and run
   
