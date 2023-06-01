@@ -13,6 +13,9 @@ namespace Solipsist
         [SerializeField] private UnityEvent OnConnected;
         [SerializeField] private UnityEvent OnServerStarted;
 
+        //[SerializeField] private GameObject anchoredRootPrefab;
+        public GameObject AnchoredRoot;
+
         //private void Awake()
         //{
         //    SetXRPlugins();
@@ -32,10 +35,10 @@ namespace Solipsist
             NetworkManager.Singleton.OnServerStarted += Singleton_OnServerStarted;
 #endif
             WebSocketTransport transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport as WebSocketTransport;
-            transport.ConnectAddress = ConfigurationManager.Instance.ServerAddr;
-            transport.Port = ConfigurationManager.Instance.ServerPort;
+            transport.ConnectAddress = NetworkConfigurationManager.Instance.ServerAddr;
+            transport.Port = NetworkConfigurationManager.Instance.ServerPort;
 
-            switch (ConfigurationManager.Instance.NetworkRole)
+            switch (NetworkConfigurationManager.Instance.NetworkRole)
             {
                 case NetworkRole.Server:
                     NetworkManager.Singleton.StartServer();
@@ -51,6 +54,9 @@ namespace Solipsist
 
         private void Singleton_OnServerStarted()
         {
+            //this.AnchoredRoot = Instantiate(this.anchoredRootPrefab, Vector3.zero, Quaternion.identity);
+            //this.AnchoredRoot.GetComponent<NetworkObject>().Spawn();
+
             if (OnServerStarted != null)
             {
                 OnServerStarted.Invoke();

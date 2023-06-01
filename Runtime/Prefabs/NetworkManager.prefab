@@ -86,7 +86,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54618226c9df54608af7731199ed5f0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ConnectAddress: 10.100.94.211
+  ConnectAddress: 
+  Path: /netcode
   Port: 7777
   SecureConnection: 0
   AllowForwardedRequest: 1
@@ -121,6 +122,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47afd1dc67a95ba47b9aa0a42dc858d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetworkRole: 1
-  ServerAddr: 127.0.0.1
-  ServerPort: 7777

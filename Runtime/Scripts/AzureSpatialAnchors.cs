@@ -1,6 +1,6 @@
 // Copyright (c) Solipsist Studios Inc.
 // Licensed under the MIT License.
-
+#if !UNITY_WEBGL
 using Solipsist.Models;
 using System;
 using System.Collections;
@@ -139,9 +139,9 @@ namespace Solipsist
             //{
             string reqAddr = string.Format(
                 LIST_ANCHORS_QUERY,
-                ConfigurationManager.Instance.BaseAddress,
-                ConfigurationManager.Instance.ExperienceID,
-                ConfigurationManager.Instance.GetAnchorsApiCode);
+                NetworkConfigurationManager.Instance.BaseAddress,
+                NetworkConfigurationManager.Instance.ExperienceID,
+                NetworkConfigurationManager.Instance.GetAnchorsApiCode);
             UnityWebRequest request = UnityWebRequest.Get(reqAddr);
             yield return request.SendWebRequest();
 
@@ -267,9 +267,9 @@ namespace Solipsist
 
             string reqAddr = string.Format(
                 ADD_ANCHOR_QUERY,
-                ConfigurationManager.Instance.BaseAddress,
-                ConfigurationManager.Instance.ExperienceID,
-                ConfigurationManager.Instance.AddAnchorApiCode);
+                NetworkConfigurationManager.Instance.BaseAddress,
+                NetworkConfigurationManager.Instance.ExperienceID,
+                NetworkConfigurationManager.Instance.AddAnchorApiCode);
             string anchorJson = JsonUtility.ToJson(anchor);
             byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(anchorJson);
             var request = UnityWebRequest.Put(reqAddr, jsonToSend);
@@ -432,3 +432,5 @@ namespace Solipsist
 #endif
     }
 }
+
+#endif

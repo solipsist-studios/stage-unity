@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Solipsist
 {
-    public class ConfigurationManager : MonoBehaviour
+    public class NetworkConfigurationManager : MonoBehaviour
     {
         public NetworkRole NetworkRole { get; private set; }
         public string ServerAddr { get; private set; }
@@ -17,7 +17,7 @@ namespace Solipsist
         public string AddAnchorApiCode { get; private set; }
         public string GetAnchorsApiCode { get; private set; }
 
-        public static ConfigurationManager Instance { get; private set; }
+        public static NetworkConfigurationManager Instance { get; private set; }
 
         /// <summary>
         /// Called when the manager initializes in order to configure the service.

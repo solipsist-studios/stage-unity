@@ -1,0 +1,23 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.PackageManager;
+using UnityEngine;
+
+namespace Solipsist
+{
+    [InitializeOnLoad]
+    [CustomEditor(typeof(PlatformSelector))]
+    public class DependencyLoader : Editor
+    {
+        static DependencyLoader()
+        {
+            Debug.Log("Loading dependencies...");
+#if !UNITY_WEBGL
+            Client.Add("file:./Mixed Reality/com.microsoft.azure.spatial-anchors-sdk.core-2.13.3.tgz");
+            Client.Add("file:./Mixed Reality/com.microsoft.azure.spatial-anchors-sdk.android-2.13.3.tgz");
+            Client.Add("file:./Mixed Reality/com.microsoft.azure.spatial-anchors-sdk.windows-2.13.3.tgz");
+#endif
+        }
+    }
+}
