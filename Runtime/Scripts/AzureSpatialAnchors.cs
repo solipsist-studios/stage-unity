@@ -30,7 +30,7 @@ namespace Solipsist
 #if UNITY_WSA || UNITY_ANDROID
             UnityDispatcher.InvokeOnAppThread(async () =>
             { 
-                await AddAnchorAsync(anchorObj, new AnchorObjectModel());
+                await AnchorObjectAsync(anchorObj, new AnchorObjectModel());
             });
 #endif
         }
@@ -50,6 +50,8 @@ namespace Solipsist
         public event Action<AnchorObjectModel> AnchorStoredCallback;
         public event Action<List<AnchorObjectModel>> AnchorsReceivedCallback;
         public event Action<AnchorObjectModel, AnchorLocatedEventArgs> AnchorLocatedCallback;
+        
+        //public bool AreAnchorsLoaded() { get { return isSessionReady && 
 
         public AnchorObjectModel GetAnchorModel(string id)
         {
@@ -208,6 +210,7 @@ namespace Solipsist
         private async Task CreateAnchor(GameObject anchorGameObject, AnchorObjectModel anchorData)
         {
             // TODO: Check if anchorData is null!
+            // TODO: Also check if local anchor already exists
             //Add and configure ASA components
             CloudNativeAnchor cloudNativeAnchor = anchorGameObject.AddComponent<CloudNativeAnchor>();
             await cloudNativeAnchor.NativeToCloud();
@@ -300,7 +303,7 @@ namespace Solipsist
             }
         }
 
-        public async Task AddAnchorAsync(GameObject anchorObject, AnchorObjectModel anchorData)
+        public async Task AnchorObjectAsync(GameObject anchorObject, AnchorObjectModel anchorData)
         {
             if (anchorObject == null)
             {
@@ -323,19 +326,24 @@ namespace Solipsist
             // Create the prefab
             GameObject newGameObject = GameObject.Instantiate(objectTemplate, anchorPose.position, anchorPose.rotation);
 
+            AnchorGameObject(newGameObject, cloudSpatialAnchor);
+
+            // Return created object
+            return newGameObject;
+        }
+
+        public void AnchorGameObject(GameObject obj, CloudSpatialAnchor cloudSpatialAnchor)
+        {
             // Attach a cloud-native anchor behavior to help keep cloud
             // and native anchors in sync.
-            newGameObject.AddComponent<CloudNativeAnchor>();
+            obj.AddComponent<CloudNativeAnchor>();
 
             // If a cloud anchor is passed, apply it to the native anchor
             if (cloudSpatialAnchor != null)
             {
-                CloudNativeAnchor cloudNativeAnchor = newGameObject.GetComponent<CloudNativeAnchor>();
+                CloudNativeAnchor cloudNativeAnchor = obj.GetComponent<CloudNativeAnchor>();
                 cloudNativeAnchor.CloudToNative(cloudSpatialAnchor);
             }
-
-            // Return created object
-            return newGameObject;
         }
 
         private void RemoveAllAnchorGameObjects()
